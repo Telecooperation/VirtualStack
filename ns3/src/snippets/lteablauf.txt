@@ -1,0 +1,54 @@
+Ptr<LteHelper> lteHelper = CreateObject<LteHelper> ();
+Ptr<PointToPointEpcHelper>  epcHelper = CreateObject<PointToPointEpcHelper> ();
+lteHelper->SetEpcHelper (epcHelper);
+
+Ptr<Node> pgw = epcHelper->GetPgwNode ();
+
+- Auf allen anderen Knoten (remote hosts) Internetstack installieren
+    InternetStackHelper internet;
+    internet.Install (remoteHostContainer);
+
+- Verbindung vom pgw zu Knoten im oberen Netzwerk per p2pHelper, dann ganz normal bei dem NetDeviceContainer IPs vergeben
+    PointToPointHelper p2ph;
+    NetDeviceContainer internetDevices = p2ph.Install (pgw, remoteHost);
+    //Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign (internetDevices);
+
+- Statische Route auf dem Knoten im oberen Netz, damit er ins LTE-Netz routen kann (Über Interface 1, was vom p2phelper angelegt wurde)
+    Ipv4StaticRoutingHelper ipv4RoutingHelper;
+    Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHost->GetObject<Ipv4> ());
+    remoteHostStaticRouting->AddNetworkRouteTo (Ipv4Address ("7.0.0.0"), Ipv4Mask ("255.0.0.0"), 1);
+
+- Anlegen der ues und enbs
+    NodeContainer ueNodes;
+    NodeContainer enbNodes;
+    enbNodes.Create (numberOfNodes);
+    ueNodes.Create (numberOfUeNodes);
+
+- MobilityHelper
+    MobilityHelper mobility;
+    mobility.SetMobilityModel ("ns3::ConstantPositionMobilityModel");
+    mobility.Install (enbNodes);
+    mobility.Install (ueNodes);
+
+- Erst dann ues und enbs dem lteHelper zuordnen
+    NetDeviceContainer enbLteDevs = lteHelper->InstallEnbDevice (enbNodes);
+    NetDeviceContainer ueLteDevs = lteHelper->InstallUeDevice (ueNodes);
+
+- Den ues über den epcHelper einen IPv4Stack geben
+    internet.Install (ueNodes);
+    Ipv4InterfaceContainer ueIpIface;
+    ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueLteDevs));
+
+- Den UEs eine Route über das remote gateway geben
+    Ptr<Node> ueNode = ueNodes.Get (u);
+    // Set the default gateway for the UE
+    Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNode->GetObject<Ipv4> ());
+    ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1); //Hier AddRoute falls das existiert
+
+- Ues an enbs anmelden
+    lteHelper->Attach (ueLteDevs, enbLteDevs.Get (0));
+
+- Ues einen EpsBearer zuweisen
+    Ptr<NetDevice> ueDevice = ueLteDevs.Get (u);
+    EpsBearer bearer (EpsBearer::GBR_CONV_VOICE);
+    lteHelper->ActivateDedicatedEpsBearer (ueDevice, bearer, EpcTft::Default ());

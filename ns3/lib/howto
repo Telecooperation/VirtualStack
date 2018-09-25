@@ -1,0 +1,13 @@
+//### libns3
+python2 ./waf configure --disable-tests --disable-examples --build-profile=optimized --prefix=$PWD/install build install
+
+//### libns3-dce
+//enable-opt wird verwendet wenn ns3 mit "optimized" kompiliert wurde
+CXX="g++-5" CC="gcc-5" python2 ./waf configure --disable-tests --disable-examples --enable-opt --with-ns3=../libns3/install --prefix=$PWD/install build install
+
+//### missing
+doesnt work with gcc7 (clang is not supported by this waf version)
+ln -s /usr/include/locale.h /usr/include/xlocale.h
+
+//### compile error for libns3-dce
+in wsscript von libns3-dce auskommentieren von: 760: build_dce_tests und 761: build_dce_examples
