@@ -104,7 +104,7 @@ void UdpPlusStack::loop()
             updatePayloadHeader(payload);
             payload->prependDataAutomaticBeforeStart(&_udpPlusDataHeader);
 
-            if (!_isManagement)
+/*            if (!_isManagement)
             {
                 auto timeCount = payload->toTypeAutomatic<size_t>(payload->size() - sizeof(size_t));
                 payload->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
@@ -114,6 +114,7 @@ void UdpPlusStack::loop()
                 payload->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(),
                                                     appendPosition + sizeof(uint8_t));
             }
+*/
 
             //Needed by: Fec
             //FEC, might send an additional storage which shall not be counted as its released immediately after receive

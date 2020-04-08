@@ -33,7 +33,7 @@ void GenericStack::loop()
             auto payload = _toStackBuffer.pop();
 //            LatencyMeter::addInTime(sendKey);
 
-            if (!_isManagement)
+           /* if (!_isManagement)
             {
                 auto timeCount = payload->toTypeAutomatic<size_t>(payload->size() - sizeof(size_t));
                 payload->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
@@ -41,7 +41,7 @@ void GenericStack::loop()
                 auto appendPosition = sizeof(size_t) + timeCount*(sizeof(uint8_t) + sizeof(long));
                 payload->replaceDataScalarBeforeEnd(stackIndex, appendPosition);
                 payload->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(), appendPosition + sizeof(uint8_t));
-            }
+            }*/
             _kernelPtr.sendPacket(*payload);
             debouncer.reset();
         }
@@ -54,7 +54,7 @@ void GenericStack::loop()
             if (!recvPacket || !_kernelPtr.isValid()) //connection has been closed
                 break;
 
-            if (!_isManagement)
+            /*if (!_isManagement)
             {
                 auto timeCount = recvPacket->toTypeAutomatic<size_t>(recvPacket->size() - sizeof(size_t));
                 recvPacket->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
@@ -63,7 +63,7 @@ void GenericStack::loop()
                 recvPacket->replaceDataScalarBeforeEnd(stackIndex, appendPosition);
                 recvPacket->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(),
                                                        appendPosition + sizeof(uint8_t));
-            }
+            }*/
 
             _fromStackBuffer.push(std::move(recvPacket));
         }

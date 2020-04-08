@@ -59,13 +59,13 @@ void StackEngineReceiveController::loop()
                 debouncer.reset();
 
 
-				auto timeCount = toNorthboundData->toTypeAutomatic<size_t>(toNorthboundData->size() - sizeof(size_t));
+/*				auto timeCount = toNorthboundData->toTypeAutomatic<size_t>(toNorthboundData->size() - sizeof(size_t));
 				toNorthboundData->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
 
 				auto appendPosition = sizeof(size_t) + timeCount*(sizeof(uint8_t) + sizeof(long));
 				toNorthboundData->replaceDataScalarBeforeEnd(0, appendPosition);
 				toNorthboundData->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(), appendPosition + sizeof(uint8_t));
-
+*/
                 //TODO: possible blocking as the buffer might be filled by another stackengine
                 _northboundDevice.push(std::move(toNorthboundData));
 

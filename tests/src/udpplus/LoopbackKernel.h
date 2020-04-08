@@ -1,7 +1,6 @@
 #pragma once
 
 #include <common/DataStructures/Container/RingBufferMove.h>
-#include <gmock/gmock-generated-function-mockers.h>
 #include <interface/IKernel.h>
 #include <common/Allocator/VsObjectFactory.h>
 #include <VirtualStackSettings.h>
