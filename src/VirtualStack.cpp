@@ -95,12 +95,12 @@ void VirtualStack::loop()
             if (!storage)
                 continue;
 
-            auto timeCount = storage->toTypeAutomatic<size_t>(storage->size() - sizeof(size_t));
-            storage->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
+  //          auto timeCount = storage->toTypeAutomatic<size_t>(storage->size() - sizeof(size_t));
+  //          storage->replaceDataScalarBeforeEnd(static_cast<size_t>(1 + timeCount));
 
-            auto appendPosition = sizeof(size_t) + timeCount*(sizeof(uint8_t) + sizeof(long));
-            storage->replaceDataScalarBeforeEnd(static_cast<uint8_t>(0), appendPosition);
-            storage->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(), appendPosition + sizeof(uint8_t));
+//            auto appendPosition = sizeof(size_t) + timeCount*(sizeof(uint8_t) + sizeof(long));
+ //           storage->replaceDataScalarBeforeEnd(static_cast<uint8_t>(0), appendPosition);
+  //          storage->replaceDataScalarBeforeEnd(StopWatch::getHighResolutionTime(), appendPosition + sizeof(uint8_t));
 
             //data
             inspectionStruct = Classifier::process(storage);
